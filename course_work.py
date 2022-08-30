@@ -2,10 +2,9 @@ from unicodedata import name
 import requests
 from pprint import pprint
 import yadisk
-from time import sleep
-import tkinter as tk
-import tkinter.ttk as ttk
-from alive_progress import alive_bar #pip install alive-progress 
+import time
+# import tkinter as tk
+# import tkinter.ttk as ttk
 from tqdm import tqdm 
     
 access_token = 'vk1.a.guBSUV6VmU9kPXdsPy9w0IOT590UWSG6kxuQCSsMIYrdURdd_v8PVKoiujjQjxuQH2QjDyRPqkaSB-tU7PmSb0PbbGE-NcfDMBrTTEr3FMfF4UvQXkl8uB3e5amd5RVXheCCIiDIqY6du16au1pUbDO4kidXUQH44yEdB8LYVku89XFQ8FJaieYC7lgYtgky'
@@ -59,24 +58,11 @@ class VK:
 
    
 
-    
-# if __name__ =="__main__":
-# win = tk.Tk()
-# win.geometry (f'500x600+50+50')
-# win.title('Перенос фото с профиля ВКонтакте на Яндекс Диск')
-# tk.Label(win, text = 'Введите ID пользователя')
-# user_id = tk.Entry(win)
-
-
-# win.mainloop()
-
-
 
 user_id = input('Введите id пользователя ВКонтакте: ')
 name_folder = input('Введите название папки: ')
 user_id = 1222
 # user_id = 7970141
-
 
 vk = VK(access_token, user_id)
 
@@ -86,24 +72,11 @@ list_photo = vk.users_photo()
 y = yadisk.YaDisk(token=TOKEN_YA)
 y.mkdir("/" + name_folder) 
 
-for photo in list_photo:
-    path = (name_folder + '/' + photo['name'])
-    y.upload_url(photo['url'], path) 
-    time.sleep(0.33)
-    # master = tk.Tk()
-    # progress_bar = ttk.Progressbar(master, orient="horizontal", mode="determinate", maximum=100, value=0)
-    # label_1 = tk.Label(master, text="Progress Bar")
-    # label_1.grid(row=0, column=0)
-    # progress_bar.grid(row=0, column=1)
-    # progress_bar.start()
-    # progress_bar.step(0.3)
-    # tk.mainloop()
-    qs = <query or iterable>            # usually some queryset or iterable
-    with alive_bar(qs.count()) as bar:  # or `len(iterable)`: declare your expected total
-        for item in qs:                 # iterate over your items
-        # process an item
-            bar() 
 
+for photo in tqdm(list_photo):
+    path = (name_folder + '/' + photo['name'])
+    y.upload_url(photo['url'], path)
+    time.sleep(0.33)   
 
 ###############################
 
