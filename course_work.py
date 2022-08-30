@@ -1,4 +1,4 @@
-# CourseWork Tyan V PY-59
+# CourseWork Tyan V. PY-59
 # Backup photo from VK to Yandex Disk/
 
 from unicodedata import name
@@ -46,45 +46,63 @@ class VK:
                     break
             n += 1 
         return list_photo
+    
+def uppload_file_to_YaDisk(y, list_photo):
+# Загрузка фотографий на Яндекс Диск
+    count_photo = 5
+    print()
+    print(f'Всего найдено {len(list_photo)} фотографий')
+    print('Будет гружено 5 максимального размера')
+    print()
+    count_photo_user = input('Если хотите изменить количество, введите "да". Для продолжения нажмите Enter: ')
+
+    if str.lower(count_photo_user) == 'да': 
+        count_photo_user = int(input(f'Введите количество загружаемых фото от 1 до {len(list_photo)}: ')) 
+        count_photo = count_photo_user
+    try:       
+        y.mkdir("/" + name_folder) 
+        vk_size_type = ['w','z','y','r','q','p','o','x','m','s']
+        sort_size_photo = []
+        for size in vk_size_type:    
+            for photo in list_photo:
+                if size == photo['type']:
+                    sort_size_photo.append(photo)
+                
+        for photo in tqdm(sort_size_photo[0:count_photo]):
+                path = (name_folder + '/' + photo['name'])
+                y.upload_url(photo['url'], path)
+                time.sleep(0.33)
+        print()
+        print('Загрузка завершена')
+    except:
+        print()
+        print('Ошибка подключения или такая папка уже существует') 
+    return sort_size_photo
 
 
-with open('tokens.txt', 'r',encoding='utf-8') as file_object: # Считывает токены из файла tokens.txt
-    list_file = file_object.readlines()
-    access_token =  list_file [1].strip()
-    TOKEN_YA =  list_file [3].strip()
-
-
-# if __name__ =="__main__":
-user_id = input('Введите id пользователя ВКонтакте: ')
-name_folder = input('Введите название папки: ')
-# user_id = 1222
-
-vk = VK(access_token, user_id)
-#######################
-list_photo = vk.users_photo()
-count_photo = 5
-print(f'Всего найдено {len(list_photo)} фотографий')
-print('Будет гружено 5 максимального размера')
-count_photo_user = input('Если хотите изменить количество, введите "да". Для продолжения нажмите Enter: ')
-
-if str.lower(count_photo_user) == 'да': 
-    count_photo_user = int(input(f'Введите количество загружаемых фото от 1 до {len(list_photo)}: ')) 
-    count_photo = count_photo_user
-
-y = yadisk.YaDisk(token=TOKEN_YA)
-try:       
-    y.mkdir("/" + name_folder) 
-    vk_size_type = ['w','z','y','r','q','p','o','x','m','s']
-    sort_size_photo = []
-    for size in vk_size_type:    
-        for photo in list_photo:
-            if size == photo['type']:
-              sort_size_photo.append(photo)
+if __name__ =="__main__":
+    
+    with open('tokens.txt', 'r',encoding='utf-8') as file_object: # Считывает токены из файла tokens.txt
+        list_file = file_object.readlines()
+        access_token =  list_file [1].strip()
+        TOKEN_YA =  list_file [3].strip()
             
-    for photo in tqdm(sort_size_photo[0:count_photo]):
-            path = (name_folder + '/' + photo['name'])
-            y.upload_url(photo['url'], path)
-            time.sleep(0.33)
-    print('Загрузка завершена')
-except:
-    print('Ошибка подключения или такая папка уже существует')   
+    user_id = input('Введите id пользователя ВКонтакте: ')
+    name_folder = input('Введите название папки: ')
+    # user_id = 1222
+    
+    vk = VK(access_token, user_id)
+    list_photo = vk.users_photo()  
+
+    y = yadisk.YaDisk(token=TOKEN_YA)
+    sorted_list_foto = uppload_file_to_YaDisk(y, list_photo) # Вызывает функцию загрузки фото на ЯД
+
+    list_info_photo = []  # Выводит данные о фото на терминал 
+    for photo in sorted_list_foto:
+        info_photo_dict = {}
+        info_photo_dict['file_name'] = photo['name']
+        info_photo_dict['type'] = photo['type']
+        list_info_photo.append(info_photo_dict)
+    print()
+    pprint(list_info_photo)
+    
